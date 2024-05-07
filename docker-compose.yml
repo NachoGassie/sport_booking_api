@@ -1,13 +1,42 @@
 version: "3.8"
+networks:
+  sport_booking_network: 
+
 services:
   postgresDb:
     image: postgres:16
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=sport-booking
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+    container_name: sport_booking_db
     volumes:
       - ./postgres:/var/lib/postgresql/data
     ports:
       - "5434:5432"
+    networks:
+      sport_booking_network:
+
+  sport_booking_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sport_booking_nest
+    container_name: sport_booking_api
+    environment:
+      - PORT=${PORT}
+      - NODE_ENV=development
+      - POSTGRES_HOST=sport_booking_db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+    ports:
+      - "${PORT}:3000"
+    depends_on:
+      - postgresDb
+    volumes:
+      - ./src:/app/src
+    networks:
+      sport_booking_network:

@@ -1,0 +1,8 @@
+node_modules
+test
+.gitignore
+.git
+.prettierrc
+Readme
+*.spec.ts
+*.spec.js

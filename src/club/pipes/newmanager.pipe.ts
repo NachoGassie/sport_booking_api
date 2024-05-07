@@ -1,7 +1,7 @@
 import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
-import { Role } from '../../../common/enums/role.enum';
-import { AuthService } from '../../../auth/auth.service';
-import { UpdateClubDto } from '../../dto/update-club.dto';
+import { Role } from '../../common/enums/role.enum';
+import { AuthService } from '../../auth/auth.service';
+import { UpdateClubDto } from '../dto/update-club.dto';
 
 @Injectable()
 export class NewmanagerPipe implements PipeTransform {

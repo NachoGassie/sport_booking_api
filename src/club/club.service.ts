@@ -45,7 +45,7 @@ export class ClubService {
     const { sort, order, ...pagination } = options;
     return paginate(this.clubRepository, pagination,{
       order: { [sort]: order },
-      where: { managerAccount: idUser}
+      where: { managerAccount: idUser }
     });
   }
 

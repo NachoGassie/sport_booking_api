@@ -6,11 +6,11 @@ import { AuthSwagger, BadReqNotFoundSwagger, NotFoundByIdSwagger, NotFoundByIdUp
 import { Role } from '../common/enums/role.enum';
 import { ActiveUserInterface } from '../common/interfaces/active-user.interface';
 import { BookingService } from './booking.service';
-import { CreateBookingDto } from './dto/create-booking.dto';
-import { UpdateBookingDto } from './dto/update-booking.dto';
-import { BookingUserPipe } from './pipe/booking-user.pipe';
+import { BookingAuth } from './decorators/booking-auth.decorator';
 import { GetAllBookingsDTO } from './dto/booking-query.dto';
 import { BookingQuerySearchDto } from './dto/booking-search-query.dto';
+import { CreateBookingDto } from './dto/create-booking.dto';
+import { UpdateBookingDto } from './dto/update-booking.dto';
 
 @ApiTags('bookings')
 @Controller('booking')
@@ -39,8 +39,8 @@ export class BookingController {
   @AuthSwagger({ roles: [Role.ADMIN, Role.MANAGER, Role.BOOKER] })
   @NotFoundByIdSwagger('booking')
   @Get(':idBooking')
-  @Auth(Role.BOOKER)
-  findOneById(@Param('idBooking', ParseUUIDPipe, BookingUserPipe) idBooking: string){
+  @BookingAuth(Role.BOOKER)
+  findOneById(@Param('idBooking', ParseUUIDPipe) idBooking: string){
     return this.bookingService.findById(idBooking);
   }
 
@@ -61,9 +61,9 @@ export class BookingController {
   @AuthSwagger({ roles: [Role.ADMIN, Role.MANAGER, Role.BOOKER] })
   @NotFoundByIdUpdateSwagger('booking')
   @Patch(':idBooking')
-  @Auth(Role.BOOKER)
+  @BookingAuth(Role.BOOKER)
   async update(
-    @Param('idBooking', ParseUUIDPipe, BookingUserPipe) idBooking: string,
+    @Param('idBooking', ParseUUIDPipe) idBooking: string,
     @Body() updateBookingDto: UpdateBookingDto
   ) {
     return this.bookingService.update(idBooking, updateBookingDto);
@@ -72,9 +72,9 @@ export class BookingController {
   @AuthSwagger({ roles: [Role.ADMIN, Role.MANAGER, Role.BOOKER] })
   @NotFoundByIdSwagger('booking')
   @Delete(':idBooking')
-  @Auth(Role.BOOKER)
+  @BookingAuth(Role.BOOKER)
   async remove(
-    @Param('idBooking', ParseUUIDPipe, BookingUserPipe) idBooking: string
+    @Param('idBooking', ParseUUIDPipe) idBooking: string
   ) {
     await this.bookingService.remove(idBooking);
     return { idBooking };
