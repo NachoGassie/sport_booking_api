@@ -103,7 +103,8 @@ export class AuthService {
   }
 
   private validateRole(role: Role){
-    if (role === Role.ADMIN) throw new ForbiddenException('role not allowed');
+    // if (role === Role.ADMIN) throw new ForbiddenException('role not allowed'); 
+    // to work in production
     
     const roles = Object.values(Role);
 
