@@ -1,0 +1,15 @@
+FROM node:20.12-alpine3.18
+
+WORKDIR /app
+
+COPY . .
+
+RUN npm install
+
+RUN npm run build
+
+RUN npm rm -rf ./src
+
+EXPOSE $PORT
+
+CMD [ "npm", "run", "start:prod" ]
