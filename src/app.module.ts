@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { THROTTLER_STRATEGY } from './auth/strategies/throttler.strategy';
 import { BookingModule } from './booking/booking.module';
 import { ClubModule } from './club/club.module';
 import { FieldModule } from './field/field.module';
@@ -9,6 +12,7 @@ import { SportModule } from './sport/sport.module';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([THROTTLER_STRATEGY]),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: "postgres",
@@ -30,7 +34,6 @@ import { SportModule } from './sport/sport.module';
             : null,
       },
     }), 
-    // TypeOrmModule.forRoot(typeOrmConfig),
     AuthModule, 
     BookingModule, 
     ClubModule, 
@@ -38,6 +41,8 @@ import { SportModule } from './sport/sport.module';
     SportModule, 
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard }
+  ],
 })
 export class AppModule {}
