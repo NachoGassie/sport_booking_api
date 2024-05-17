@@ -17,7 +17,7 @@ export class AuthRegisterDto {
   @MinLength(6)
   password: string;
 
-  @IsIn([Role.MANAGER, Role.BOOKER])
+  @IsIn([Role.ADMIN, Role.MANAGER, Role.BOOKER])
   @IsOptional()
   role?: Role;
 }
