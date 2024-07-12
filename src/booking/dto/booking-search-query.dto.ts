@@ -17,11 +17,6 @@ export class BookingQuerySearchDto{
   @ApiPropertyOptional()
   bookTime: Date;
 
-  @IsString()
-  @IsOptional()
-  @ApiPropertyOptional()
-  booker: string;
-
   @IsUUID()
   @IsOptional()
   @ApiPropertyOptional()

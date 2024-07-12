@@ -51,6 +51,17 @@ export class BookingService {
     });
   }
 
+  async findByBooker(options: GetAllBookingsDTO, booker: string ): GetAllPagination<Booking>{
+    const {sort, order, ...pagination } = options;
+
+    const orderQuery = OrderByFactory.getOrder(sort, order);
+
+    return paginate(this.bookingRepository, pagination, {
+      order: orderQuery,
+      where: { booker },
+      relations: ['field'],
+    });
+  }
 
   async findById(idBooking: string): Promise<Booking>{
     const booking = await this.bookingRepository.findOne({

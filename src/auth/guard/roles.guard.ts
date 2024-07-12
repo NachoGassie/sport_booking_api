@@ -19,7 +19,9 @@ export class RolesGuard implements CanActivate {
 
     if (userRole === Role.ADMIN) return true;
 
-    if (role === Role.BOOKER && userRole === Role.MANAGER) return true;
+    // requires booker and is manager
+    // TODO -> booker does booker stuff, manager does manager stuff;
+    // if (role === Role.BOOKER && userRole === Role.MANAGER) return true;
     
     return role === userRole;
   }

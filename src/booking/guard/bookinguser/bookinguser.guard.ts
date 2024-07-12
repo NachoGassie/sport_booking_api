@@ -6,20 +6,28 @@ import { Role } from '../../../common/enums/role.enum';
 export class BookinguserGuard implements CanActivate {
 
   constructor(
-    private readonly bookingService: BookingService
+    private readonly bookingService: BookingService,
   ){}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
 
     const { role, userName } = req.user;
-    const { idBooking} = req.params;
-    const { booker } = await this.bookingService.findById(idBooking);
 
-    const notAllowed = role === Role.BOOKER && userName !== booker;
+    if (role === Role.ADMIN || role == Role.MANAGER) return true;
 
-    if(notAllowed){
-      throw new ForbiddenException('not allowed to deeply acces this club');
+    const { idBooking, booker: reqBooker } = req.params;
+
+    if (idBooking) {
+      const { booker } = await this.bookingService.findById(idBooking);
+
+      if(userName !== booker){
+        throw new ForbiddenException('not allowed to acces this booking');
+      }
+    }else if (reqBooker) {
+      if (reqBooker !== userName) {
+        throw new ForbiddenException('not allowed to acces this booking');
+      }
     }
 
 

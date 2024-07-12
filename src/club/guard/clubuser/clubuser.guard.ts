@@ -12,14 +12,15 @@ export class ClubuserGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
 
-    const { idClub, idField } = req.params;
     const { idUser, role } = req.user;
+
+    if (role === Role.ADMIN) return true;
+
+    const { idClub, idField } = req.params;
 
     const { managerAccount, fields } = await this.clubService.findClubById(idClub);
 
-    const notAllowed = role === Role.MANAGER && idUser !== managerAccount;
-
-    if(notAllowed){
+    if(idUser !== managerAccount){
       throw new ForbiddenException('not allowed to deeply acces this club');
     }
 

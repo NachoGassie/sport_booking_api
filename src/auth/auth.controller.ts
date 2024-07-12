@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Req, UnauthorizedException } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { AuthSwagger, NotFoundByIdSwagger } from '../common/decorators/common-swagger.decorator';
+import { Request } from 'express';
 import { ActiveUser } from '../common/decorators/active-user.decorator';
+import { AuthSwagger, NotFoundByIdSwagger } from '../common/decorators/common-swagger.decorator';
 import { Role } from '../common/enums/role.enum';
 import { ActiveUserInterface } from '../common/interfaces/active-user.interface';
 import { AuthService } from './auth.service';
@@ -31,9 +32,19 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+  @ApiOperation({ summary: 'get token by refresh token' })
+  @ApiUnauthorizedResponse({ description: 'wrong refresh token' })
+  @Post('refresh')
+  refreshToken(@Req() request: Request){
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    if (type !== 'Bearer') {
+      throw new UnauthorizedException();
+    }
+    return this.authService.refreshToken(token);
+  }
+
   @ApiOperation({ summary: 'get user by token' })
   @AuthSwagger({ roles: [Role.ADMIN, Role.MANAGER, Role.BOOKER] })
-  @ApiBadRequestResponse({ description: 'create body in wrong format' })
   @Get('profile')
   @Auth(Role.BOOKER)
   profile(@ActiveUser() user: ActiveUserInterface){

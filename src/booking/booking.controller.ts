@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '../auth/decorators/auth.decorator';
 import { ActiveUser } from '../common/decorators/active-user.decorator';
@@ -9,6 +9,7 @@ import { BookingService } from './booking.service';
 import { BookingAuth } from './decorators/booking-auth.decorator';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
+import { GetAllBookingsDTO } from './dto/booking-query.dto';
 
 @ApiTags('bookings')
 @Controller('booking')
@@ -18,6 +19,17 @@ export class BookingController {
     private readonly bookingService: BookingService
   ) {}
 
+  @ApiOperation({ summary: 'get all by booker' })
+  @AuthSwagger({ roles: [Role.ADMIN, Role.MANAGER, Role.BOOKER] })
+  @Get('booker/:booker')
+  @BookingAuth(Role.BOOKER)
+  findByBooker(
+    @Query() options: GetAllBookingsDTO,
+    @Param('booker') booker: string
+  ){
+    return this.bookingService.findByBooker(options, booker);
+  }
+
   @ApiOperation({ summary: 'get one booking' })
   @AuthSwagger({ roles: [Role.ADMIN, Role.MANAGER, Role.BOOKER] })
   @NotFoundByIdSwagger('booking')
@@ -26,6 +38,7 @@ export class BookingController {
   findOneById(@Param('idBooking', ParseUUIDPipe) idBooking: string){
     return this.bookingService.findById(idBooking);
   }
+
 
   @ApiOperation({ summary: 'create one booking' })
   @AuthSwagger({ roles: [Role.ADMIN, Role.MANAGER, Role.BOOKER] })

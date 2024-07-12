@@ -9,7 +9,8 @@ export class UserModifyPipe implements PipeTransform{
     @Inject(REQUEST) 
     protected readonly req: RequestWithUser,
   ){}
-
+  
+  // TODO -> should be guard
   transform(value: any, metadata: ArgumentMetadata) {
     const { idUser } = this.req.params;
     const { idUser: tokenId } = this.req.user;

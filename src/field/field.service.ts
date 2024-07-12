@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginate } from 'nestjs-typeorm-paginate';
-import { GetAllPagination } from '../common/interfaces/common.interface';
 import { In, Repository } from 'typeorm';
+import { GetAllPagination } from '../common/interfaces/common.interface';
 import { Sport } from '../sport/entities/sport.entity';
 import { CreateFieldDto } from './dto/create-field.dto';
 import { GetAllFieldsDTO } from './dto/field-query.dto';
@@ -37,6 +37,16 @@ export class FieldService {
     });
   }
 
+  findAllBySport(options: GetAllFieldsDTO, idSport: string): GetAllPagination<Field>{
+    const {order, sort, ...pagination } = options;
+    const orderQuery = OrderByFactory.getOrder(sort, order);
+    return paginate(this.fieldRepository, pagination, {
+      where: { sports: { idSport } },
+      order: orderQuery, 
+      relations: ['club']
+    });
+  }
+
   getFieldBookingsByClub(idClub: string){
     return this.fieldRepository.find({
       where: { club: { idClub } },
@@ -45,7 +55,7 @@ export class FieldService {
     });
   }
 
-  async findOne(idField: string){
+  async findOne(idField: string): Promise<Field>{
     const field = await this.fieldRepository.findOne({
       where: { idField },  
       relations: ['club', 'sports', 'bookings']
@@ -56,7 +66,7 @@ export class FieldService {
     return field;
   }
 
-  async findOneNoRelations(idField: string){
+  async findOneNoRelations(idField: string): Promise<Field>{
     const field = await this.fieldRepository.findOne({
       where: { idField },  
     });

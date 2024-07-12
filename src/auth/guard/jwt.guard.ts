@@ -3,6 +3,14 @@ import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
 
+interface Payload{
+  idUser: string,
+  userName: string,
+  role: string,
+  iat: number,
+  exp: number
+}
+
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt'){
 
@@ -19,7 +27,7 @@ export class JwtAuthGuard extends AuthGuard('jwt'){
     if (!token) throw new UnauthorizedException();
   
     try {
-      const payload = await this.jwtService.verifyAsync(token);
+      const payload = await this.jwtService.verifyAsync<Payload>(token);
       req.user = payload; 
     } catch (error) {
       throw new UnauthorizedException();

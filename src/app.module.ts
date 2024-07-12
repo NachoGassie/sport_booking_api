@@ -12,7 +12,7 @@ import { SportModule } from './sport/sport.module';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot([THROTTLER_STRATEGY]),
+    // ThrottlerModule.forRoot([THROTTLER_STRATEGY]),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: "postgres",
@@ -42,7 +42,7 @@ import { SportModule } from './sport/sport.module';
   ],
   controllers: [],
   providers: [
-    { provide: APP_GUARD, useClass: ThrottlerGuard }
+    // { provide: APP_GUARD, useClass: ThrottlerGuard }
   ],
 })
 export class AppModule {}
